@@ -63,7 +63,7 @@ def output_packet_loss_rate(outputfilename,maxPackets,dropRate):
 	j = 0
 	R4 = open(outputfilename, "w")
 	for x in range(0, loop_length):
-		lossRates = float(((float(maxPackets) - float(dropRate))/ float(maxPackets)) * 100)
+		lossRates = float((float(dropRate)/ float(maxPackets)) * 100)
 		lossRates = round(lossRates, 2)
 		print "packet loss rate: %s\n" % (lossRates)
 		R4.write(str(j)+"\t" + str(lossRates) + "\n")
