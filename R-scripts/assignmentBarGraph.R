@@ -12,8 +12,8 @@ p<- p + scale_fill_manual("legend", labels=c("Female", "Male"),values = c("G1" =
 p<- p + labs(title="")
 p<- p + xlab("")
 p<- p + ylab("Confidence in Understanding Course Materials")
-p<- p + theme(panel.border=element_blank(),panel.grid.major = element_blank(), panel.grid.minor=element_blank(),panel.background=element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color="black"), text=element_text(size=25, family = "Times"))
-p<- p + theme(legend.title=element_blank(), legend.background=element_rect(color = "black"), axis.text.x = element_text(face = "bold"))
+p<- p + theme(panel.background=element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color="black"), text=element_text(size=25, family = "Times"))
+p<- p + theme(legend.title=element_blank(), legend.background=element_rect(color = "black"), axis.text.x = element_text(face = "bold", margin = margin(5,0,0,0)), axis.title.y=element_text(margin = margin(0,30,0,0)))
 p<- p + scale_y_continuous(limit=c(0,5), expand = c(0,0))
 p
 ggsave(filename = "assignment.pdf", plot = last_plot(), width=210,height=297,units="mm")
