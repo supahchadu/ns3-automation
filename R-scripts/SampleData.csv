@@ -1,6 +1,4 @@
-ExperimentGroup,ControlGroup
-G1,first,second
-G2,first,second
-G3,first,first
-G4,second,first
-G5,first,first
+Person,G1,G2
+Experiment Group,3.40,3.81
+Control Group,3.78,3.86
+
