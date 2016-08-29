@@ -1,0 +1,16 @@
+library(ggplot2)
+library(reshape)
+
+lowspq<- read.csv("HighPriority.csv", sep = ",")
+mml <- melt(lowspq,id="Priority")
+p <- ggplot(mml,aes(x=Priority,y=value))
+p <- p + geom_point(shape=23,size=1.5) #+ geom_smooth(method=lm, se=FALSE) 
+p <- p + xlim(1,100)
+p<- p + labs(title="High Priority")
+p<- p + xlab("R2RDataRates")
+p<- p + ylab("Loss Rates %")
+p<- p + theme(panel.background=element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color="black"), text=element_text(size=25, family = "Times"))
+p<- p + theme(panel.margin=element_blank(),legend.title=element_blank(), legend.background=element_rect(color = "black"), axis.text.x = element_text(margin = margin(0,0,0,0)), axis.title.y=element_text(margin = margin(0,30,0,0)))
+p<- p + scale_y_continuous(limit=c(0,100), expand = c(0,0))
+p
+ggsave(filename = "highpriority.pdf", plot = last_plot(), width=210,height=297,units="mm")
