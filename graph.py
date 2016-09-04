@@ -1,30 +1,160 @@
 #!/usr/bin/python
 # 
-# Richard Dean D.
-# Sample Python Program
+# Authors:
+# Richard Dean D. & Omri Gabay
 # 
 # For automating ns-3 ./waf with different parameters.
 # With a small configuration to the previous python program
-# in the github repository by Armen Arslanian
+# in the github repository by David Mayer
 
 # For automating NS-3 Commands for different parameters.
 import os
+import copy
 import subprocess
 import shutil
+import time
+import sys
 
 # This is each interval to compute in your output data
 n = input('Interval n: ')
 n = int(n)
-numAptPriorityProbes = 0
 
 print "This is your number %i" % (n)
 directoryPath = "/home/chad/ns-allinone-3.14.1/ns-3.14.1"
 
 print "This is your interval %i" % (n)
 
+ns3_arguments = {}
+#--ReceiveQueueSizeR2=75 --TXQueueSizeR2=100 --TXQueueSizeS=4000000 --TXQueueSizeR1=4000000 --SR1Delay=5ms --R1R2Delay=5ms --R2RDelay=5ms --SR1DataRate=50Mbps --R1R2DataRate=100Mbps --R2RDataRate=10Mbps --outputFile=./OUTPUT_FILES/P_H_H.dat --packetSize=100 --interPacketTime=0.00000001 --initialPacketTrainLength=1000 --separationPacketTrainLength=2 --numAptPriorityProbes=1000 --aptPriority='H'"
+# Set the Default Values for NS3 Experiment Parameters
+ns3_arguments['ReceiveQueueSizeR2'] ='75'
+ns3_arguments['interPacketTime'] ='0.00000001'
+ns3_arguments['TXQueueSizeR1']='4000000'
+ns3_arguments['TXQueueSizeR2']='100'
+ns3_arguments['TXQueueSizeS']='4000000'
+# following are represented in Mbps
+ns3_arguments['SR1DataRate']='50Mbps'
+ns3_arguments['R1R2DataRate']='100Mbps'
+ns3_arguments['R2RDataRate']='10Mbps'
+# end
+# following are represented in ms
+ns3_arguments['SR1Delay']='5ms'
+ns3_arguments['R1R2Delay']='5ms'
+ns3_arguments['R2RDelay']='5ms'
+# end
+ns3_arguments['packetSize']='100'
+
+# new additional arguments
+ns3_arguments['separationPacketTrainLength'] = '2'
+ns3_arguments['initialPacketTrainLength'] = '1000'
+ns3_arguments['numAptPriorityProbes'] = '1000'
+
+# These change between each simulation
+ns3_arguments['aptPriority'] = 'H'
+ns3_arguments['outputFile']="./OUTPUT_FILES/P_H_H.dat"
+
+cmd_command = './waf --run "'
+cmd_command += 'priority-queue-sim'
+cmd_command += ' --interPacketTime='+ns3_arguments['interPacketTime']
+cmd_command += ' --TXQueueSizeR1='+ns3_arguments['TXQueueSizeR1']
+cmd_command += ' --TXQueueSizeR2='+ns3_arguments['TXQueueSizeR2']
+cmd_command += ' --TXQueueSizeS='+ns3_arguments['TXQueueSizeS']
+cmd_command += ' --ReceiveQueueSizeR2='+ns3_arguments['ReceiveQueueSizeR2']
+cmd_command += ' --SR1DataRate='+ns3_arguments['SR1DataRate']
+cmd_command += ' --R1R2DataRate='+ns3_arguments['R1R2DataRate']
+cmd_command += ' --R2RDataRate='+ns3_arguments['R2RDataRate']
+cmd_command += ' --SR1Delay='+ns3_arguments['SR1Delay']
+cmd_command += ' --R1R2Delay='+ns3_arguments['R1R2Delay']
+cmd_command += ' --R2RDelay='+ns3_arguments['R2RDelay']
+cmd_command += ' --packetSize='+ns3_arguments['packetSize']
+#cmd_command += ' --separationPacketTrainLength='+ns3_arguments['separationPacketTrainLength']
+cmd_command += ' --initialPacketTrainLength='+ns3_arguments['initialPacketTrainLength']
+cmd_command += ' --numAptPriorityProbes='+ns3_arguments['numAptPriorityProbes']
+
+cmd_command2 = copy.deepcopy(cmd_command) 
+
+# P A R A M E T E R S - T H A T - C H A N G E
+# cmd_command += ' --outputFile='+ns3_arguments['outputFile']
+# cmd_command += ' --aptPriority='+ns3_arguments['aptPriority']
+
+# Second waf command is here... with 'L'
+# ns3_arguments['aptPriority'] = 'L' # This parameter change each run!
+# ns3_arguments['outputFile']="./OUTPUT_FILES/P_H_L.dat" # so is this!
+
+# cmd_command2 += ' --outputFile='+ns3_arguments['outputFile']
+# cmd_command2 += ' --aptPriority='+ns3_arguments['aptPriority']
+
+# cmd_command += '"'
+# cmd_command2 += '"'
+
+
+#----------------------------
+separationExperiment = []
+waf_commands = []
+all_waf = []
+all_outputFileNames = ""
+experiments = 10 #number of expected results
+z = 1
+y=0
+for i in range(16):
+	if i >= 10 and z < 40:
+		z = 50
+	elif z >= 50:
+		z += 9
+	currentLen = str(z)
+	separationExperiment.append(currentLen)
+	# priority L
+	waf_commands.append(copy.deepcopy(cmd_command))
+	ns3_arguments['separationPacketTrainLength'] = str(currentLen)
+	ns3_arguments['aptPriority'] = "'L'"
+	ns3_arguments['outputFile']="./OUTPUT_FILES/P_L" + "_" + str(z) + ".dat" # so is this!
+	waf_commands[y] += ' --separationPacketTrainLength='+ns3_arguments['separationPacketTrainLength']
+	waf_commands[y] += ' --outputFile='+ns3_arguments['outputFile']
+	waf_commands[y] += ' --aptPriority='+ns3_arguments['aptPriority']
+	waf_commands[y] += '"'
+	all_outputFileNames += "P_L" + "_" + str(z) + "\n"
+	all_waf += waf_commands[y] + '\n'
+	z+=1
+	y+=1
+z=1
+for i in range(16):
+	if i >= 10 and z < 40:
+		z = 50
+	elif z >= 50:
+		z += 9
+	currentLen = str(z)
+	separationExperiment.append(currentLen)
+	# priority H
+	separationExperiment.append(currentLen)
+	waf_commands.append(copy.deepcopy(cmd_command))
+	ns3_arguments['separationPacketTrainLength'] = str(currentLen)
+	ns3_arguments['aptPriority'] = "'H'"
+	ns3_arguments['outputFile']="./OUTPUT_FILES/P_H" + "_" + str(z) + ".dat" # so is this!
+	waf_commands[y] += ' --separationPacketTrainLength='+ns3_arguments['separationPacketTrainLength']
+	waf_commands[y] += ' --outputFile='+ns3_arguments['outputFile']
+	waf_commands[y] += ' --aptPriority='+ns3_arguments['aptPriority']
+	waf_commands[y] += '"'
+	all_outputFileNames += "P_H" + "_" + str(z) + "\n"
+	all_waf += waf_commands[y] + '\n'
+	z+=1
+	y+=1
+#----------------------------
+
+# print cmd_command
+# print cmd_command2
+
+# Opens File to input our waf commands to
+AutoWaf = open("waf-commands.txt", "w")
+filesToGraph = open("files-to-graph.txt", "w")
+print("Currently Writing Waf Commands in the textfile")
+AutoWaf.writelines(all_waf)
+filesToGraph.writelines(all_outputFileNames)
+AutoWaf.close()
+filesToGraph.close()
+
 # Opens File to extract our waf commands from
 AutoWaf = open("waf-commands.txt", "r")
-commandLists = [] #Create an array to store our waf commands 
+commandLists = [] # Create an array to store our waf commands 
 os.getcwd()
 print("Currently Reading Waf Commands in the textfile")
 
@@ -36,10 +166,10 @@ while(True): # For iterating the commands from the text file
 	# Now extract the waf commands from the file with \n as breakpoints
 	wafCommand = aCommand.split("\n")
 	commandLists.append(wafCommand[0])
+	print commandLists
 
 	# Printing command extracted
 	print "Command: %s" % (wafCommand[0])
-	
 	# Execute command
 	print "Executing command --->"
 	print "..Changing Directory to NS-3.14.1 folder"
@@ -65,11 +195,22 @@ def output_packet_loss_rate(outputfilename,maxPackets,dropRate):
 	for x in range(0, loop_length):
 		lossRates = float((float(dropRate)/ float(maxPackets)) * 100)
 		lossRates = round(lossRates, 2)
-		print "packet loss rate: %s\n" % (lossRates)
+		#print "packet loss rate: %s\n" % (lossRates)
 		R4.write(str(j)+"\t" + str(lossRates) + "\n")
 		j = j + (n+1)
 	print "Generated %s" % (fileR4)
 	R4.close()
+
+def calculate_loss_rate(maxPackets,dropRate):
+	lossRates = 0
+	loop_length = maxPackets
+	print "Total packets values passed: %s" % (str(maxPackets))
+	print "Total packet lose values passed: %s" % (str(dropRate))
+
+	lossRates = float((float(dropRate)/ float(maxPackets)) * 100)
+	lossRates = round(lossRates, 2)
+	print "packet loss rate: %s\n" % (lossRates)
+	return lossRates
 
 def calculate_packet_loss(apt_filename,priority):
 	packetLossRate = 0
@@ -84,6 +225,20 @@ def calculate_packet_loss(apt_filename,priority):
 		if(int(line_parts[0])>=1000 and priority=="H" and line_parts[1] == '-1\n'):
 			packetLossRate+=1
 	print "total packet loss: %s" % (str(packetLossRate))
+	return packetLossRate
+
+def calculate_packet_loss_L(apt_filename):
+	packetLossRate = 0
+	packetReader = open(apt_filename, "r")
+	while(True): # start while --> 2
+		line = packetReader.readline()
+		line_parts = line.split("\t")
+		if(not line):
+			break
+		if(line_parts[1] == '-1\n'):
+			packetLossRate+=1
+	print "total packet loss: %s" % (str(packetLossRate))
+	packetReader.close()
 	return packetLossRate
 
 def get_max_packets(filename):
@@ -135,6 +290,8 @@ def create_packetloss_difference_rate(file_H, file_L):
 	loop_max = int(len(difference_value))
 	i = 0
 	for x in range(0, loop_max):
+		# This line is responsible for outputting the X (packet number) and the 
+		# Y (difference between packet from H and packet from L)
 		data_H_L.write(str(i+n) + "\t" + str(difference_value[x]) + "\n")
 		i = i + (n+1)
 	data_H_L.close()
@@ -153,8 +310,10 @@ print "Analyzing the output files for graphing"
 outputFilenames = open("files-to-graph.txt", "r")
 extensionNameH = ".dat-H"
 extensionNameL = ".dat-L"
-
-# Iteration for code snippet from Armen Arslanian
+LossRateH_data = ""
+LossRateL_data = ""
+currentLength = 0
+# Iteration for code snippet from David Mayer
 # Code has been modified for automation and cleanliness of each
 # waf command generated output files.
 while(True): # Start While ---> 1
@@ -168,18 +327,25 @@ while(True): # Start While ---> 1
 	fileR4 = filename[0] + "R4.txt"
 	R1 = open(fileH, "r")
 	R2 = open(fileL, "r")
-	packetLossRate_H = calculate_packet_loss(fileH,"H")
+	packetLossRate_H = calculate_packet_loss(fileH, 'H')
 	print "packetLossRate_H: %s " % (packetLossRate_H)
-	packetLossRate_L = calculate_packet_loss(fileL,"L")
+	packetLossRate_L = calculate_packet_loss(fileL, 'L')
 	print "packetLossRate_H: %s " % (packetLossRate_L)
 	print "Creating Directory for the output files ..."
 
 	numAptPriorityProbes = get_max_packets(fileH)
 	output_packet_loss_rate(fileR3,numAptPriorityProbes, packetLossRate_H)
+	if currentLength >= 16: # get all dat-H data according to file-to-graphs.txt
+		LossRateH_data += separationExperiment[currentLength-15] + "\t" +  str(calculate_loss_rate(numAptPriorityProbes,packetLossRate_H)) + "\n"
+
 	numAptPriorityProbes = get_max_packets(fileL)
 	output_packet_loss_rate(fileR4,numAptPriorityProbes, packetLossRate_L)
 	create_packetloss_difference_rate(fileR3,fileR4)
+	
+	if currentLength < 16:	# get all dat-L data according to file-to-graphs.txt
+		LossRateL_data += separationExperiment[currentLength] + "\t" +  str(calculate_loss_rate(numAptPriorityProbes,packetLossRate_L)) + "\n"
 
+	currentLength+=1
 	if not os.path.exists(filename[0]):
 		os.makedirs(filename[0])
 	os.chdir(directoryPath + "/OUTPUT_FILES/" + filename[0])
@@ -198,6 +364,13 @@ while(True): # Start While ---> 1
 	print "Finished Creating required files"
 	print "Finished automation."
 # end while --> 1
+os.chdir(directoryPath + "/OUTPUT_FILES")
+LossRateH = open("LossRate_H", "w")
+LossRateL = open("LossRate_L", "w")
+LossRateH.writelines(LossRateH_data)
+LossRateL.writelines(LossRateL_data)
+LossRateH.close()
+LossRateL.close()
 AutoWaf.close()
 
 	
