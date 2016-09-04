@@ -88,14 +88,14 @@ cmd_command2 = copy.deepcopy(cmd_command)
 # cmd_command2 += '"'
 
 
-#----------------------------
-separationExperiment = []
-waf_commands = []
-all_waf = []
-all_outputFileNames = ""
+#--------- SPQ Automation Waf parameters -------------------
+separationExperiment = [] # list of changing parameter values
+waf_commands = []	  # list of collected waf commands
+all_waf = []		  # String of waf commands combinations in a list  
+all_outputFileNames = ""  # all outfile foldernames holder for files-to-graph.txt
 experiments = 10 #number of expected results
-z = 1
-y=0
+z = 1	# keeps count of the parameters for waf separation length SPQ
+y=0	# keeps count on waf_commands current/overall indexes
 for i in range(16):
 	if i >= 10 and z < 40:
 		z = 50
@@ -337,7 +337,7 @@ while(True): # Start While ---> 1
 	output_packet_loss_rate(fileR3,numAptPriorityProbes, packetLossRate_H)
 	if currentLength >= 16: # get all dat-H data according to file-to-graphs.txt
 		LossRateH_data += separationExperiment[currentLength-15] + "\t" +  str(calculate_loss_rate(numAptPriorityProbes,packetLossRate_H)) + "\n"
-
+	
 	numAptPriorityProbes = get_max_packets(fileL)
 	output_packet_loss_rate(fileR4,numAptPriorityProbes, packetLossRate_L)
 	create_packetloss_difference_rate(fileR3,fileR4)
@@ -365,8 +365,8 @@ while(True): # Start While ---> 1
 	print "Finished automation."
 # end while --> 1
 os.chdir(directoryPath + "/OUTPUT_FILES")
-LossRateH = open("LossRate_H", "w")
-LossRateL = open("LossRate_L", "w")
+LossRateH = open("LossRate_H", "w") # All H priority loss packets stored
+LossRateL = open("LossRate_L", "w") # ALL L priority loss packets stored
 LossRateH.writelines(LossRateH_data)
 LossRateL.writelines(LossRateL_data)
 LossRateH.close()
