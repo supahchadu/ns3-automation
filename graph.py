@@ -33,7 +33,7 @@ ns3_arguments['TXQueueSizeR1']='4000000'
 ns3_arguments['TXQueueSizeR2']='100'
 ns3_arguments['TXQueueSizeS']='4000000'
 # following are represented in Mbps
-ns3_arguments['SR1DataRate']='100Mbps'
+ns3_arguments['SR1DataRate']='20Mbps'
 ns3_arguments['R1R2DataRate']='100Mbps'
 ns3_arguments['R2RDataRate']='10Mbps'
 # end
@@ -287,8 +287,8 @@ def create_packetloss_difference_rate(file_H, file_L):
 def create_r_graph(lossp_H, lossp_L, separationParameter):
 	data_H = open(lossp_H, "r")
 	data_L = open(lossp_L, "r")
-	data_H_L = open("separationexperiment_100.csv", "w")
-	data_Delta = open("separationwithdelta_100.csv", "w")
+	data_H_L = open("separationexperiment_20mbps.csv", "w")
+	data_Delta = open("separationwithdelta_20mbps.csv", "w")
 	difference_value = []
 	data_Delta.write("separationLength,LowPriority,HighPriority,DeltaLoss" + "\n")
 	data_H_L.write("separationLength,LowPriority,HighPriority" + "\n")
