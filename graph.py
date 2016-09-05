@@ -33,7 +33,7 @@ ns3_arguments['TXQueueSizeR1']='4000000'
 ns3_arguments['TXQueueSizeR2']='100'
 ns3_arguments['TXQueueSizeS']='4000000'
 # following are represented in Mbps
-ns3_arguments['SR1DataRate']='50Mbps'
+ns3_arguments['SR1DataRate']='100Mbps'
 ns3_arguments['R1R2DataRate']='100Mbps'
 ns3_arguments['R2RDataRate']='10Mbps'
 # end
@@ -227,20 +227,6 @@ def calculate_packet_loss(apt_filename,priority):
 	print "total packet loss: %s" % (str(packetLossRate))
 	return packetLossRate
 
-def calculate_packet_loss_L(apt_filename):
-	packetLossRate = 0
-	packetReader = open(apt_filename, "r")
-	while(True): # start while --> 2
-		line = packetReader.readline()
-		line_parts = line.split("\t")
-		if(not line):
-			break
-		if(line_parts[1] == '-1\n'):
-			packetLossRate+=1
-	print "total packet loss: %s" % (str(packetLossRate))
-	packetReader.close()
-	return packetLossRate
-
 def get_max_packets(filename):
 	numAptPriorityProbes1 = 0
 	packetReader = open(filename, "r")
@@ -301,8 +287,8 @@ def create_packetloss_difference_rate(file_H, file_L):
 def create_r_graph(lossp_H, lossp_L, separationParameter):
 	data_H = open(lossp_H, "r")
 	data_L = open(lossp_L, "r")
-	data_H_L = open("separationexperiment.csv", "w")
-	data_Delta = open("separationwithdelta.csv", "w")
+	data_H_L = open("separationexperiment_100.csv", "w")
+	data_Delta = open("separationwithdelta_100.csv", "w")
 	difference_value = []
 	data_Delta.write("separationLength,LowPriority,HighPriority,DeltaLoss" + "\n")
 	data_H_L.write("separationLength,LowPriority,HighPriority" + "\n")
