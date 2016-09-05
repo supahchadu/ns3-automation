@@ -297,7 +297,38 @@ def create_packetloss_difference_rate(file_H, file_L):
 	data_H_L.close()
 	data_H.close()
 	data_L.close()
-	
+
+def create_r_graph(lossp_H, lossp_L, separationParameter):
+	data_H = open(lossp_H, "r")
+	data_L = open(lossp_L, "r")
+	data_H_L = open("separationexperiment.csv", "w")
+	data_Delta = open("separationwithdelta.csv", "w")
+	difference_value = []
+	data_Delta.write("separationLength,LowPriority,HighPriority,DeltaLoss" + "\n")
+	data_H_L.write("separationLength,LowPriority,HighPriority" + "\n")
+	packetLossForH = []
+	packetLossForL = []
+	z = 0
+	while(True):
+		line_H = data_H.readline()
+		line_L = data_L.readline()
+		packet_H = line_H.split("\t")
+		packet_L = line_L.split("\t")
+		if not line_H or not line_L:
+			break
+		difference_value.append(round(float(packet_L[1]) - float(packet_H[1]),2))
+		packetLossForH.append(float(packet_H[1]))
+		packetLossForL.append(float(packet_L[1]))
+
+	loop_max = int(len(difference_value))
+	for x in range(0, loop_max):
+		data_Delta.write(separationParameter[x] + "," + str(packetLossForL[x]) + "," + str(packetLossForH[x]) + "," + str(difference_value[x]) + "\n")
+		data_H_L.write(separationParameter[x] + "," + str(packetLossForL[x]) + "," + str(packetLossForH[x]) + "\n")
+		z+=1
+	data_H_L.close()
+	data_H.close()
+	data_L.close()
+	data_Delta.close()
 		
 # END OF HELPER FUNCTIONS
 
@@ -313,9 +344,9 @@ extensionNameL = ".dat-L"
 LossRateH_data = ""
 LossRateL_data = ""
 currentLength = 0
-# Iteration for code snippet from David Mayer
-# Code has been modified for automation and cleanliness of each
-# waf command generated output files.
+
+gFile = open("packetloss.csv", "w")
+
 while(True): # Start While ---> 1
 	aFilename = outputFilenames.readline()
 	if(not aFilename):
@@ -336,7 +367,7 @@ while(True): # Start While ---> 1
 	numAptPriorityProbes = get_max_packets(fileH)
 	output_packet_loss_rate(fileR3,numAptPriorityProbes, packetLossRate_H)
 	if currentLength >= 16: # get all dat-H data according to file-to-graphs.txt
-		LossRateH_data += separationExperiment[currentLength-15] + "\t" +  str(calculate_loss_rate(numAptPriorityProbes,packetLossRate_H)) + "\n"
+		LossRateH_data += separationExperiment[currentLength-16] + "\t" +  str(calculate_loss_rate(numAptPriorityProbes,packetLossRate_H)) + "\n"
 	
 	numAptPriorityProbes = get_max_packets(fileL)
 	output_packet_loss_rate(fileR4,numAptPriorityProbes, packetLossRate_L)
@@ -372,5 +403,5 @@ LossRateL.writelines(LossRateL_data)
 LossRateH.close()
 LossRateL.close()
 AutoWaf.close()
-
+create_r_graph("LossRate_H","LossRate_L",separationExperiment)
 	
