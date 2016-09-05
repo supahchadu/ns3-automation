@@ -153,7 +153,7 @@ AutoWaf.close()
 filesToGraph.close()
 
 # Opens File to extract our waf commands from
-AutoWaf = open("waf-commands.txt", "r")
+AutoWaf = open("waf-commands_b.txt", "r")
 commandLists = [] # Create an array to store our waf commands 
 os.getcwd()
 print("Currently Reading Waf Commands in the textfile")
@@ -324,7 +324,7 @@ print "Files listed: "
 subprocess.call(['ls'])
 
 print "Analyzing the output files for graphing"
-outputFilenames = open("files-to-graph.txt", "r")
+outputFilenames = open("files-to-graph_b.txt", "r")
 extensionNameH = ".dat-H"
 extensionNameL = ".dat-L"
 LossRateH_data = ""
