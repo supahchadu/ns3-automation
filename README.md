@@ -12,4 +12,7 @@ NS-3.x.x helper for automating  `waf commands` and computing the datas in it. Th
 - Each commands are separated with `\n` or by hitting `Enter` or else the program won't read it.
 - Put the name of the filename of the expected file you wish to compute inside the `files-to-graph.txt`
 
+### ns-3-automation: (Available:working)
+- Automation for Compression Experiment 1 and 2
+- Automation for Strict Priority Queueing Experiment.
 
