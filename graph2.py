@@ -25,68 +25,48 @@ directoryPath = "/home/chad/ns-allinone-3.14.1/ns-3.14.1"
 print "This is your interval %i" % (n)
 
 ns3_arguments = {}
-#--ReceiveQueueSizeR2=75 --TXQueueSizeR2=100 --TXQueueSizeS=4000000 --TXQueueSizeR1=4000000 --SR1Delay=5ms --R1R2Delay=5ms --R2RDelay=5ms --SR1DataRate=50Mbps --R1R2DataRate=100Mbps --R2RDataRate=10Mbps --outputFile=./OUTPUT_FILES/P_H_H.dat --packetSize=100 --interPacketTime=0.00000001 --initialPacketTrainLength=1000 --separationPacketTrainLength=2 --numAptPriorityProbes=1000 --aptPriority='H'"
+#./waf --run "compression-sim --outputFile=./OUTPUT_FILES/compression.dat --entropy=h --numPackets=10000 --packetSize=1070 --interPacketTime=.00000001 --s0p0Delay=30ms --p0p1Delay=30ms --p1r0Delay=30ms --s0p0DataRate=5Mbps --p0p1DataRate=4Mbps --p1r0DataRate=5Mbps --s0QueueSize=600000 --p0QueueSize=75 --p1QueueSize=75 --compression=1 --queueMode=p"
 # Set the Default Values for NS3 Experiment Parameters
-ns3_arguments['ReceiveQueueSizeR2'] ='75'
+ns3_arguments['numPackets'] ='10000'
 ns3_arguments['interPacketTime'] ='0.00000001'
-ns3_arguments['TXQueueSizeR1']='4000000'
-ns3_arguments['TXQueueSizeR2']='100'
-ns3_arguments['TXQueueSizeS']='4000000'
+ns3_arguments['s0QueueSize']='600000'
+ns3_arguments['p0QueueSize']='75'
+ns3_arguments['p1QueueSize']='75'
 # following are represented in Mbps
-ns3_arguments['SR1DataRate']='20Mbps'
-ns3_arguments['R1R2DataRate']='100Mbps'
-ns3_arguments['R2RDataRate']='10Mbps'
+ns3_arguments['s0p0DataRate']='5Mbps'
+ns3_arguments['p0p1DataRate']='4Mbps'
+ns3_arguments['p1r0DataRate']='5Mbps'
 # end
 # following are represented in ms
-ns3_arguments['SR1Delay']='5ms'
-ns3_arguments['R1R2Delay']='5ms'
-ns3_arguments['R2RDelay']='5ms'
+ns3_arguments['s0p0Delay']='30ms'
+ns3_arguments['p0p1Delay']='30ms'
+ns3_arguments['p1r0Delay']='30ms'
 # end
-ns3_arguments['packetSize']='100'
+ns3_arguments['packetSize']='1070'
 
 # new additional arguments
-ns3_arguments['separationPacketTrainLength'] = '2'
-ns3_arguments['initialPacketTrainLength'] = '1000'
-ns3_arguments['numAptPriorityProbes'] = '1000'
-
-# These change between each simulation
-ns3_arguments['aptPriority'] = 'H'
-ns3_arguments['outputFile']="./OUTPUT_FILES/P_H_H.dat"
+ns3_arguments['compression'] = '1'
+ns3_arguments['queueMode'] = 'p'
+ns3_arguments['entropy'] = 'h'
 
 cmd_command = './waf --run "'
-cmd_command += 'priority-queue-sim'
+cmd_command += 'compression-sim'
 cmd_command += ' --interPacketTime='+ns3_arguments['interPacketTime']
-cmd_command += ' --TXQueueSizeR1='+ns3_arguments['TXQueueSizeR1']
-cmd_command += ' --TXQueueSizeR2='+ns3_arguments['TXQueueSizeR2']
-cmd_command += ' --TXQueueSizeS='+ns3_arguments['TXQueueSizeS']
-cmd_command += ' --ReceiveQueueSizeR2='+ns3_arguments['ReceiveQueueSizeR2']
-cmd_command += ' --SR1DataRate='+ns3_arguments['SR1DataRate']
-cmd_command += ' --R1R2DataRate='+ns3_arguments['R1R2DataRate']
-cmd_command += ' --R2RDataRate='+ns3_arguments['R2RDataRate']
-cmd_command += ' --SR1Delay='+ns3_arguments['SR1Delay']
-cmd_command += ' --R1R2Delay='+ns3_arguments['R1R2Delay']
-cmd_command += ' --R2RDelay='+ns3_arguments['R2RDelay']
+cmd_command += ' --s0QueueSize='+ns3_arguments['s0QueueSize']
+cmd_command += ' --p0QueueSize='+ns3_arguments['p0QueueSize']
+cmd_command += ' --p1QueueSize='+ns3_arguments['p1QueueSize']
+cmd_command += ' --s0p0DataRate='+ns3_arguments['s0p0DataRate'] # X
+#cmd_command += ' --p0p1DataRate='+ns3_arguments['p0p1DataRate'] # Y
+cmd_command += ' --p1r0DataRate='+ns3_arguments['p1r0DataRate'] # Z
+cmd_command += ' --s0p0Delay='+ns3_arguments['s0p0Delay']
+cmd_command += ' --p0p1Delay='+ns3_arguments['p0p1Delay']
+cmd_command += ' --p1r0Delay='+ns3_arguments['p1r0Delay']
 cmd_command += ' --packetSize='+ns3_arguments['packetSize']
-#cmd_command += ' --separationPacketTrainLength='+ns3_arguments['separationPacketTrainLength']
-cmd_command += ' --initialPacketTrainLength='+ns3_arguments['initialPacketTrainLength']
-cmd_command += ' --numAptPriorityProbes='+ns3_arguments['numAptPriorityProbes']
+cmd_command += ' --queueMode='+ns3_arguments['queueMode']
+cmd_command += ' --compression='+ns3_arguments['compression']
+#cmd_command += ' --entropy='+ns3_arguments['entropy'] # interchanging 'h' -> 'l'
 
 cmd_command2 = copy.deepcopy(cmd_command) 
-
-# P A R A M E T E R S - T H A T - C H A N G E
-# cmd_command += ' --outputFile='+ns3_arguments['outputFile']
-# cmd_command += ' --aptPriority='+ns3_arguments['aptPriority']
-
-# Second waf command is here... with 'L'
-# ns3_arguments['aptPriority'] = 'L' # This parameter change each run!
-# ns3_arguments['outputFile']="./OUTPUT_FILES/P_H_L.dat" # so is this!
-
-# cmd_command2 += ' --outputFile='+ns3_arguments['outputFile']
-# cmd_command2 += ' --aptPriority='+ns3_arguments['aptPriority']
-
-# cmd_command += '"'
-# cmd_command2 += '"'
-
 
 #--------- SPQ Automation Waf parameters -------------------
 separationExperiment = [] # list of changing parameter values
@@ -94,58 +74,71 @@ waf_commands = []	  # list of collected waf commands
 all_waf = []		  # String of waf commands combinations in a list  
 all_outputFileNames = ""  # all outfile foldernames holder for files-to-graph.txt
 experiments = 10 #number of expected results
-z = 1	# keeps count of the parameters for waf separation length SPQ
+
+# ------------ COMPRESSION Automation Waf parameters -------
+YDataRateValue = ["1Mbps","4Mbps","5Mbps","6Mbps"] # Y data rate according to the Parameters above
+numberOfPackets = []
+
 y=0	# keeps count on waf_commands current/overall indexes
-for i in range(16):
-	if i >= 10 and z < 40:
-		z = 50
-	elif z >= 50:
-		z += 9
-	currentLen = str(z)
-	separationExperiment.append(currentLen)
-	# priority L
-	waf_commands.append(copy.deepcopy(cmd_command))
-	ns3_arguments['separationPacketTrainLength'] = str(currentLen)
-	ns3_arguments['aptPriority'] = "'L'"
-	ns3_arguments['outputFile']="./OUTPUT_FILES/P_L" + "_" + str(z) + ".dat" # so is this!
-	waf_commands[y] += ' --separationPacketTrainLength='+ns3_arguments['separationPacketTrainLength']
-	waf_commands[y] += ' --outputFile='+ns3_arguments['outputFile']
-	waf_commands[y] += ' --aptPriority='+ns3_arguments['aptPriority']
-	waf_commands[y] += '"'
-	all_outputFileNames += "P_L" + "_" + str(z) + "\n"
-	all_waf += waf_commands[y] + '\n'
-	z+=1
-	y+=1
-z=1
-for i in range(16):
-	if i >= 10 and z < 40:
-		z = 50
-	elif z >= 50:
-		z += 9
-	currentLen = str(z)
-	separationExperiment.append(currentLen)
-	# priority H
-	separationExperiment.append(currentLen)
-	waf_commands.append(copy.deepcopy(cmd_command))
-	ns3_arguments['separationPacketTrainLength'] = str(currentLen)
-	ns3_arguments['aptPriority'] = "'H'"
-	ns3_arguments['outputFile']="./OUTPUT_FILES/P_H" + "_" + str(z) + ".dat" # so is this!
-	waf_commands[y] += ' --separationPacketTrainLength='+ns3_arguments['separationPacketTrainLength']
-	waf_commands[y] += ' --outputFile='+ns3_arguments['outputFile']
-	waf_commands[y] += ' --aptPriority='+ns3_arguments['aptPriority']
-	waf_commands[y] += '"'
-	all_outputFileNames += "P_H" + "_" + str(z) + "\n"
-	all_waf += waf_commands[y] + '\n'
-	z+=1
-	y+=1
+currentNumPackets = 500
+while(True):
+	# Low Entropy
+	if currentNumPackets > 10000:
+		break;
+	numberOfPackets.append(currentNumPackets)
+	print "%s" % (str(currentNumPackets))
+	currentNumPackets += 500
+
+for i in range(4):
+	currentNumPackets = 500
+	while(True):
+		# Low Entropy
+		if currentNumPackets > 10000:
+			break;
+		waf_commands.append(copy.deepcopy(cmd_command))
+		ns3_arguments['numPackets'] = str(currentNumPackets)
+		ns3_arguments['entropy'] = 'l'
+		ns3_arguments['p0p1DataRate']= str(YDataRateValue[i])
+		ns3_arguments['outputFile']="./OUTPUT_FILES/P_C"+ "_"+ str(YDataRateValue[i]) + "_" + str(currentNumPackets) + ".dat-L"
+		waf_commands[y] += ' --outputFile='+ns3_arguments['outputFile']
+		waf_commands[y] += ' --entropy='+ns3_arguments['entropy']
+		waf_commands[y] += ' --p0p1DataRate='+ns3_arguments['p0p1DataRate']
+		waf_commands[y] += ' --numPackets='+ns3_arguments['numPackets']
+		waf_commands[y] += '"'
+		all_outputFileNames += "P_C"+ "_"+ str(YDataRateValue[i]) + "_" + str(currentNumPackets) + "\n"
+		all_waf += waf_commands[y] + '\n'
+		currentNumPackets += 500
+		y+=1
+
+currentNumPackets = 500
+for i in range(4):
+	currentNumPackets = 500
+	while(True):
+		# Low Entropy
+		if currentNumPackets > 10000:
+			break;
+		waf_commands.append(copy.deepcopy(cmd_command))
+		ns3_arguments['numPackets'] = str(currentNumPackets)
+		ns3_arguments['entropy'] = 'h'
+		ns3_arguments['p0p1DataRate']= str(YDataRateValue[i])
+		ns3_arguments['outputFile']="./OUTPUT_FILES/P_C"+ "_"+ str(YDataRateValue[i]) + "_" + str(currentNumPackets) + ".dat-H"
+		waf_commands[y] += ' --outputFile='+ns3_arguments['outputFile']
+		waf_commands[y] += ' --entropy='+ns3_arguments['entropy']
+		waf_commands[y] += ' --p0p1DataRate='+ns3_arguments['p0p1DataRate']
+		waf_commands[y] += ' --numPackets='+ns3_arguments['numPackets']
+		waf_commands[y] += '"'
+		#all_outputFileNames += "P_H"+ "_"+ str(YDataRateValue[i]) + "_" + str(currentNumPackets) + "\n"
+		all_waf += waf_commands[y] + '\n'
+		currentNumPackets += 500
+		y+=1
 #----------------------------
 
 # print cmd_command
 # print cmd_command2
 
 # Opens File to input our waf commands to
-AutoWaf = open("waf-commands.txt", "w")
-filesToGraph = open("files-to-graph.txt", "w")
+AutoWaf = open("waf-commands-compression.txt", "w")
+filesToGraph = open("files-to-graph-compression.txt", "w")
 print("Currently Writing Waf Commands in the textfile")
 AutoWaf.writelines(all_waf)
 filesToGraph.writelines(all_outputFileNames)
@@ -153,7 +146,7 @@ AutoWaf.close()
 filesToGraph.close()
 
 # Opens File to extract our waf commands from
-AutoWaf = open("waf-commands_b.txt", "r")
+AutoWaf = open("waf-commands-compression.txt", "r")
 commandLists = [] # Create an array to store our waf commands 
 os.getcwd()
 print("Currently Reading Waf Commands in the textfile")
@@ -178,7 +171,7 @@ while(True): # For iterating the commands from the text file
 	os.chdir(directoryPath)
 	subprocess.call(["ls"])
 	print "..Executing command waf in NS-3.14.1"
-	os.system(wafCommand[0])
+	#os.system(wafCommand[0])
 	print "Successfully executed commmand..."
 	print "Preparing for analyzing data for R"
 #End While
@@ -255,9 +248,13 @@ def get_post_drop_rate(filename):
 			afterFirstPacketDrop+=1
 			if p_packets[1] == '-1\n':
 				packetsDrop+=1
-	
-	lossRate = float(( float(packetsDrop)/float(afterFirstPacketDrop) ) * 100)
-	return ("%.1f" % round((lossRate),1)) 
+	if packetsDrop > 1:
+		lossRate = float(( float(packetsDrop)/float(afterFirstPacketDrop) ) * 100)
+		return ("%.1f" % round((lossRate),1))
+		print "total packet loss: %s" % (str(lossRate)) 
+	else:
+		#print "total packet loss: %s" % (str(lossRate))
+		return 0
 
 def create_packetloss_difference_rate(file_H, file_L):
 	data_H = open(file_H, "r")
@@ -287,14 +284,19 @@ def create_packetloss_difference_rate(file_H, file_L):
 def create_r_graph(lossp_H, lossp_L, separationParameter):
 	data_H = open(lossp_H, "r")
 	data_L = open(lossp_L, "r")
-	data_H_L = open("separationexperiment_20mbps.csv", "w")
-	data_Delta = open("separationwithdelta_20mbps.csv", "w")
+	data_H_L = open("compressionExperiment.csv", "w")
+	data_Delta = open("compressionExperiment-diff.csv", "w")
 	difference_value = []
-	data_Delta.write("separationLength,LowPriority,HighPriority,DeltaLoss" + "\n")
-	data_H_L.write("separationLength,LowPriority,HighPriority" + "\n")
+	data_Delta.write("numPackets,1Mbps,4Mbps,5Mbps,6Mbps" + "\n")
+	#data_H_L.write("numPackets,Speed,LossRates" + "\n")
 	packetLossForH = []
 	packetLossForL = []
+	DataRateValue = []
+	numberPackets = []
 	z = 0
+	aMbpsRow = 20
+	bMbpsRow = 40
+	cMbpsRow = 60
 	while(True):
 		line_H = data_H.readline()
 		line_L = data_L.readline()
@@ -302,14 +304,14 @@ def create_r_graph(lossp_H, lossp_L, separationParameter):
 		packet_L = line_L.split("\t")
 		if not line_H or not line_L:
 			break
-		difference_value.append(round(float(packet_L[1]) - float(packet_H[1]),2))
-		packetLossForH.append(float(packet_H[1]))
-		packetLossForL.append(float(packet_L[1]))
-
+		difference_value.append(round(float(packet_H[2]) - float(packet_L[2]),2))
+		packetLossForH.append(float(packet_H[2]))
+		packetLossForL.append(float(packet_L[2]))
+		numberPackets.append(float(packet_H[0]))
+		DataRateValue.append(packet_H[1])
 	loop_max = int(len(difference_value))
-	for x in range(0, loop_max):
-		data_Delta.write(separationParameter[x] + "," + str(packetLossForL[x]) + "," + str(packetLossForH[x]) + "," + str(difference_value[x]) + "\n")
-		data_H_L.write(separationParameter[x] + "," + str(packetLossForL[x]) + "," + str(packetLossForH[x]) + "\n")
+	for x in range(0, 20):
+		data_Delta.write(str(numberPackets[x]) + "," + str(difference_value[x]) + "," + str(difference_value[x+aMbpsRow]) + "," + str(difference_value[x+bMbpsRow])  + "," + str(difference_value[x+cMbpsRow]) + "\n")
 		z+=1
 	data_H_L.close()
 	data_H.close()
@@ -325,7 +327,7 @@ print "Files listed: "
 subprocess.call(['ls'])
 
 print "Analyzing the output files for graphing"
-outputFilenames = open("files-to-graph_b.txt", "r")
+outputFilenames = open("files-to-graph-compression.txt", "r")
 extensionNameH = ".dat-H"
 extensionNameL = ".dat-L"
 LossRateH_data = ""
@@ -333,7 +335,7 @@ LossRateL_data = ""
 currentLength = 0
 
 gFile = open("packetloss.csv", "w")
-
+currentDataRateValue = 0
 while(True): # Start While ---> 1
 	aFilename = outputFilenames.readline()
 	if(not aFilename):
@@ -345,25 +347,28 @@ while(True): # Start While ---> 1
 	fileR4 = filename[0] + "R4.txt"
 	R1 = open(fileH, "r")
 	R2 = open(fileL, "r")
-	packetLossRate_H = calculate_packet_loss(fileH, 'H')
+	packetLossRate_H = get_post_drop_rate(fileH)
 	print "packetLossRate_H: %s " % (packetLossRate_H)
-	packetLossRate_L = calculate_packet_loss(fileL, 'L')
-	print "packetLossRate_H: %s " % (packetLossRate_L)
+	packetLossRate_L = get_post_drop_rate(fileL)
+	print "packetLossRate_L: %s " % (packetLossRate_L)
 	print "Creating Directory for the output files ..."
-
-	numAptPriorityProbes = get_max_packets(fileH)
-	output_packet_loss_rate(fileR3,numAptPriorityProbes, packetLossRate_H)
-	if currentLength >= 16: # get all dat-H data according to file-to-graphs.txt
-		LossRateH_data += separationExperiment[currentLength-16] + "\t" +  str(calculate_loss_rate(numAptPriorityProbes,packetLossRate_H)) + "\n"
 	
-	numAptPriorityProbes = get_max_packets(fileL)
-	output_packet_loss_rate(fileR4,numAptPriorityProbes, packetLossRate_L)
-	create_packetloss_difference_rate(fileR3,fileR4)
-	
-	if currentLength < 16:	# get all dat-L data according to file-to-graphs.txt
-		LossRateL_data += separationExperiment[currentLength] + "\t" +  str(calculate_loss_rate(numAptPriorityProbes,packetLossRate_L)) + "\n"
 
-	currentLength+=1
+	
+	#output_packet_loss_rate(fileR3,numAptPriorityProbes, packetLossRate_H)
+	#if currentLength >= 16: # get all dat-H data according to file-to-graphs.txt
+	LossRateH_data += str(numberOfPackets[currentDataRateValue]) + "\t" + YDataRateValue[currentLength] + "\t" +  str(packetLossRate_H) + "\n"
+	
+	#if currentLength < 16:	# get all dat-L data according to file-to-graphs.txt
+	LossRateL_data +=  str(numberOfPackets[currentDataRateValue]) + "\t" + YDataRateValue[currentLength] + "\t" +  str(packetLossRate_L) + "\n"
+
+	
+	currentDataRateValue+=1
+	if currentDataRateValue >= 20:
+		currentLength+=1
+		currentDataRateValue=0
+	if currentLength > 4:
+		currentLength =0 
 	if not os.path.exists(filename[0]):
 		os.makedirs(filename[0])
 	os.chdir(directoryPath + "/OUTPUT_FILES/" + filename[0])
@@ -376,19 +381,16 @@ while(True): # Start While ---> 1
 	print "Moving created files to its designated folder ..."
 	shutil.move(fileH, filename[0])
 	shutil.move(fileL, filename[0])
-	shutil.move(fileR3, filename[0])
-	shutil.move(fileR4, filename[0])
-	shutil.move("spq_last_link_bw_effect.dat", filename[0])	
 	print "Finished Creating required files"
 	print "Finished automation."
 # end while --> 1
 os.chdir(directoryPath + "/OUTPUT_FILES")
-LossRateH = open("LossRate_H", "w") # All H priority loss packets stored
-LossRateL = open("LossRate_L", "w") # ALL L priority loss packets stored
+LossRateH = open("LossRate_H-compression", "w") # All H priority loss packets stored
+LossRateL = open("LossRate_L-compression", "w") # ALL L priority loss packets stored
 LossRateH.writelines(LossRateH_data)
 LossRateL.writelines(LossRateL_data)
 LossRateH.close()
 LossRateL.close()
 AutoWaf.close()
-create_r_graph("LossRate_H","LossRate_L",separationExperiment)
+create_r_graph("LossRate_H-compression","LossRate_L-compression",numberOfPackets)
 	
