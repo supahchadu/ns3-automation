@@ -25,6 +25,10 @@ import sys
 #
 ############################################################################
 os.getcwd()
+sanitizeDirectoryPath = "/home/amethyst/ns3-automation/SamplePcaps/SanitizedSPQ/"
+
+convertedPcaps = "/home/amethyst/ns3-automation/SamplePcaps/convertedPcaps/"
+
 def sanitizePcap(filenamePcap):
 	
 	pcapFile = filenamePcap + ".pcap"	# Get the file's pcap file
@@ -33,8 +37,10 @@ def sanitizePcap(filenamePcap):
 
 	# Commandline argument for converting pcap to tcpdump readable text
 	# file. Open the text file for read and also for our sanitize file.
-	os.system("tcpdump -nnXS -r "+ str(pcapFile) +" > " + str(outFile))
+	os.system("tcpdump -nnXS -r "+ str(pcapFile) +" > " + convertedPcaps + "/"+ str(outFile))
+	os.chdir(convertedPcaps)
 	pcapTextFile = open(outFile, "r")
+	os.chdir(sanitizeDirectoryPath)
 	sanitizeWrite = open(sanitizeFile, "w")
 	# ---------------------------------------------------------------
 	previousPacketID = 1 #Storing previous packets for keeping count
@@ -74,17 +80,17 @@ def sanitizePcap(filenamePcap):
 			PID = PID + overflow	# Add the overflow value to the next PID
 			
 			# Calculates the packets being skipped. (-1) for timestamp.
-			packetLoss = (PID-overflow) - (previousPacketID-overflow)
+			packetLoss = (PID-overflow) - numPackets #(previousPacketID-overflow)
 			print "Packet STATUS: DONE || arrival:" + str(timeStampInMilliseconds) + "s || Packet ID: %s --> %s " % (payloadDataPointer[8], str(PID))
 			if packetLoss > 1:
-				for i in range(previousPacketID+1, PID):
+				for i in range(1, packetLoss):
 					#print "Lost Packet ID: %s" % (str(i))
 					numPackets = numPackets + 1
 					print "Packet STATUS: DROP || arrival: -1 || Packet ID: %s " % (str(i + overflow))
-					sanitizeWrite.write(str(i + overflow) + "\t" + "-1\n")
+					sanitizeWrite.write(str(numPackets) + "\t" + "-1\n")
 				previousPacketID = PID
 			previousPacketID = PID
-			sanitizeWrite.write(str(PID) + "\t" + str(timeStampInMilliseconds) + "\n")
+			sanitizeWrite.write(str(numPackets +1) + "\t" + str(timeStampInMilliseconds) + "\n")
 			numPackets = numPackets + 1
 		
 	print "packets detected %s " % (numPackets)
@@ -97,9 +103,16 @@ def sanitizePcap(filenamePcap):
 
 #--------- MAIN ------------
 def main():
-	pcapFile = raw_input("Input Pcaps to sanitize: ")
-	print "Data: %s" % (pcapFile)
-	sanitizePcap(pcapFile)	
+	#pcapFile = raw_input("Input Pcaps to sanitize: ")
+	startPcap = raw_input("PCAP STARTING NUMBER: ")
+	endPcap = raw_input("PCAP ENDING NUMBER: ")
+	dataDirectory = "/media/amethyst/CCinc/RESEARCHWORK/TestResults/SPQ"
+
+	for i in range(int(startPcap),int(endPcap)+1):
+		os.chdir(dataDirectory)
+		pcapFile = str(i)
+		print "Reading Data: %s" % (pcapFile)
+		sanitizePcap(pcapFile)	
 main()
 
 	
